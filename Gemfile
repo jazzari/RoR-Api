@@ -20,8 +20,11 @@ gem 'puma', '~> 4.1'
 # gem 'image_processing', '~> 1.2'
 gem 'rspec-rails'
 gem 'factory_bot_rails'
-#gem 'active_model_serializers'
+# Use 'serializers'
 gem 'fast_jsonapi'
+
+# Use pagination
+gem 'kaminari'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
