@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::API
+	rescue_from UserAuthenticator::AuthenticationError, with: :authenticaton_error
+
 
   private
 
@@ -13,5 +15,15 @@ class ApplicationController < ActionController::API
 	    return params[:per_page] if params[:per_page].is_a?(String)
 	    params.dig(:page, :size) if params[:page].is_a?(Hash)
 	  end
+
+	  def authenticaton_error
+		error = {
+	      "status" => "401",
+	      "source" => { "pointer" => "/code" },
+	      "title" =>  "Authentication code is invalid",
+	      "detail" => "You must provide valid code in order to exchange it for token."
+	    } 
+		render json: { "errors": [ error ] }, status: 401
+      end	
 
 end
