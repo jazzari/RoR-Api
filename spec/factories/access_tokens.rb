@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :access_token do
-    sequence(:token) { |n| "MyToken #{n} " }
-    user { "John Smith" }
+    #token is generated after initialization
+    association :user
   end
 end
