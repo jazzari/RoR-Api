@@ -1,6 +1,8 @@
-class ApplicationController < ActionController::API
-	rescue_from UserAuthenticator::AuthenticationError, with: :authenticaton_error
+ class ApplicationController < ActionController::API
+ 	class AuthorizationError < StandardError; end
 
+	rescue_from UserAuthenticator::AuthenticationError, with: :authentication_error
+	rescue_from AuthorizationError, with: :authorization_error
 
   private
 
@@ -16,7 +18,7 @@ class ApplicationController < ActionController::API
 	    params.dig(:page, :size) if params[:page].is_a?(Hash)
 	  end
 
-	  def authenticaton_error
+	  def authentication_error
 		error = {
 	      "status" => "401",
 	      "source" => { "pointer" => "/code" },
@@ -25,5 +27,15 @@ class ApplicationController < ActionController::API
 	    } 
 		render json: { "errors": [ error ] }, status: 401
       end	
+
+      def authorization_error
+      	error = {
+	      "status" => "403",
+	      "source" => { "pointer" => "/headers/authorization" },
+	      "title" =>  "Not authorized", 
+	      "detail" => "You have no rights to access this resource."
+      	}
+      	render json: { "errors": [ error ] }, status: 403
+      end
 
 end
