@@ -4,6 +4,8 @@
 	rescue_from UserAuthenticator::AuthenticationError, with: :authentication_error
 	rescue_from AuthorizationError, with: :authorization_error
 
+	before_action :authorize! 
+
   private
 
 	  def current_page
@@ -16,6 +18,19 @@
 	    return unless params[:page]
 	    return params[:per_page] if params[:per_page].is_a?(String)
 	    params.dig(:page, :size) if params[:page].is_a?(Hash)
+	  end
+
+	  def authorize!
+	  	raise AuthorizationError unless current_user
+	  end
+
+	  def access_token
+	  	provided_token = request.authorization&.gsub(/\ABearer\s/, '')
+		@access_token = AccessToken.find_by(token: provided_token)
+	  end
+
+	  def current_user
+		@current_user = access_token&.user 
 	  end
 
 	  def authentication_error
